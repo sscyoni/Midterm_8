@@ -2,50 +2,58 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 
-class GraphApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Dynamic Line Graph")
+x_data = []
+y_data = []
 
-        # --- 입력 부분 ---
-        tk.Label(root, text="Enter x coordinate:").pack()
-        self.entry_x = tk.Entry(root, width=40)
-        self.entry_x.pack()
+# 그래프 그리기 함수
+def plot_graph():
+    try:
+        x = float(x_entry.get())
+        y = float(y_entry.get())
+    except ValueError:
+        print("숫자를 입력하세요!")
+        return
 
-        tk.Label(root, text="Enter y coordinate:").pack()
-        self.entry_y = tk.Entry(root, width=40)
-        self.entry_y.pack()
+    x_data.append(x)
+    y_data.append(y)
 
-        tk.Button(root, text="plot", command=self.plot_graph).pack(pady=5)
+    # 🔹 x값 기준으로 정렬해서 직선처럼 연결
+    pairs = sorted(zip(x_data, y_data), key=lambda p: p[0])
+    sorted_x, sorted_y = zip(*pairs)
 
-        # --- 그래프 영역 ---
-        self.fig = Figure(figsize=(4,3), dpi=100)
-        self.ax = self.fig.add_subplot(111)
-        self.canvas = FigureCanvasTkAgg(self.fig, master=root)
-        self.canvas.get_tk_widget().pack()
+    # 그래프 갱신
+    ax.clear()
+    ax.plot(sorted_x, sorted_y, marker='o', linestyle='-')
+    ax.set_title("Dynamic Line Plot")
+    ax.set_xlabel("X")
+    ax.set_ylabel("Y")
+    # 🔹 이게 핵심! 그래프를 tkinter에 다시 그리기
+    canvas.draw()
 
-    def plot_graph(self):
-        try:
-            # X, Y 데이터 파싱
-            x_data = list(map(float, self.entry_x.get().split(',')))
-            y_data = list(map(float, self.entry_y.get().split(',')))
+# 윈도우 설정
+root = tk.Tk()
+root.title("Plot Graph")
 
-            if len(x_data) != len(y_data):
-                raise ValueError("X와 Y의 데이터 개수가 일치하지 않습니다.")
+# 입력 필드
+x_label = tk.Label(root, text="Enter x coordinate:")
+x_label.pack()
+x_entry = tk.Entry(root)
+x_entry.pack()
 
-            self.ax.clear()
-            self.ax.plot(x_data, y_data, marker='o', linestyle='-', color='b')
-            self.ax.set_title("입력값 기반 그래프")
-            self.ax.set_xlabel("X값")
-            self.ax.set_ylabel("Y값")
-            self.canvas.draw()
+y_label = tk.Label(root, text="Enter y coordinate:")
+y_label.pack()
+y_entry = tk.Entry(root)
+y_entry.pack()
 
-        except Exception as e:
-            self.ax.clear()
-            self.ax.text(0.5, 0.5, f"입력 오류:\n{e}", ha='center', va='center')
-            self.canvas.draw()
+plot_button = tk.Button(root, text="Plot", command=plot_graph)
+plot_button.pack()
 
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = GraphApp(root)
-    root.mainloop()
+# matplotlib figure 생성
+fig = Figure(figsize=(5, 4), dpi=100)
+ax = fig.add_subplot(111)
+
+# Tkinter에 matplotlib 그래프 붙이기
+canvas = FigureCanvasTkAgg(fig, master=root)
+canvas.get_tk_widget().pack()
+
+root.mainloop()

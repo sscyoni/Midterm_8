@@ -1,0 +1,40 @@
+from PIL import ImageTk, Image
+import tkinter as tk
+
+image_files = [
+    r"C:\Users\82102\Pictures\다운로드.jpg",
+    r"C:\Users\82102\Pictures\다운로드 (1).jpg",
+    r"C:\Users\82102\Pictures\다운로드 (2).jpg",
+    r"C:\Users\82102\Pictures\다운로드 (4).jpg"
+]
+
+interval = 2000  # 2초
+current_index = 0
+photo_images = []  # PhotoImage 참조 유지
+
+def update_image():
+    global current_index
+    
+    image_path = image_files[current_index]
+    
+    img = Image.open(image_path)
+    img = img.resize((500, 300), Image.Resampling.LANCZOS)
+    
+    photo = ImageTk.PhotoImage(img)
+    photo_images.append(photo)  # 참조 유지
+    
+    image_label.config(image=photo, text=image_path, compound='bottom')
+    
+    current_index = (current_index + 1) % len(image_files)
+    
+    root.after(interval, update_image)
+
+root = tk.Tk()
+root.title("Image Slider")
+
+image_label = tk.Label(root)
+image_label.pack()
+
+update_image()
+
+root.mainloop()
