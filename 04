@@ -1,0 +1,35 @@
+import tkinter as tk
+import random
+
+def update_text_size():
+    """텍스트 크기를 랜덤으로 반환"""
+    return random.randint(20, 60)
+
+def update_text_color():
+    """텍스트 색상을 랜덤으로 반환"""
+    colors = ["red", "orange", "yellow", "green", "blue", "purple", "pink"]
+    return random.choice(colors)
+
+def animate_text(count=0):
+    """텍스트 크기와 색상을 바꾸는 애니메이션 함수"""
+    if count >= 10:   # 10번 반복 후 종료
+        return
+    size = update_text_size()
+    color = update_text_color()
+    canvas.itemconfig(text, fill=color, font=("Arial", size, "bold"))
+    root.after(500, animate_text, count + 1)  # 0.5초마다 반복
+
+# 메인 윈도우
+root = tk.Tk()
+root.title("Animated Text")
+
+canvas = tk.Canvas(root, width=400, height=200)
+canvas.pack()
+
+# 텍스트 생성
+text = canvas.create_text(200, 100, text="HELLO", fill="white", font=("Arial", 20, "bold"))
+
+# 애니메이션 시작
+animate_text()
+
+root.mainloop()
