@@ -9,10 +9,10 @@ class MovingShapeApp:
         self.canvas = tk.Canvas(root, width=800, height=800, bg="white")
         self.canvas.pack()
 
-        # 원 하나 생성
+        # 원 만들고
         self.shape = self.canvas.create_oval(100, 100, 200, 200, fill="pink")
 
-        # 방향키 이벤트
+        # 방향키 움직이면 어떻게할지 정의 (함수정의는 밑에서)
         self.root.bind("<Up>", self.move_up)
         self.root.bind("<Down>", self.move_down)
         self.root.bind("<Left>", self.move_left)
@@ -23,7 +23,7 @@ class MovingShapeApp:
 
     # ---------- 원 움직이기 ----------
     def move_shape(self, dx, dy):
-        self.canvas.move(self.shape, dx, dy)  # ✅ self,shape → self.shape
+        self.canvas.move(self.shape, dx, dy)     #먼저 이동방향 정의하기
 
     def move_up(self, event):
         self.move_shape(0, -10)
@@ -46,3 +46,4 @@ class MovingShapeApp:
 root = tk.Tk()
 app = MovingShapeApp(root)
 root.mainloop()
+
